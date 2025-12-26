@@ -1,27 +1,28 @@
-const token = localStorage.getItem('token');
-const role = localStorage.getItem('role');
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-const notLogged = document.getElementById('not-logged');
-const adminOptions = document.getElementById('admin-options');
-const astroOptions = document.getElementById('astro-options');
-const logoutBtn = document.getElementById('logout');
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
 
-if (!token) {
-  notLogged.style.display = 'block';
-} else {
-  notLogged.style.display = 'none';
-  logoutBtn.style.display = 'block';
+  const res = await fetch('http://localhost:3000/api/auth/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ username, password })
+  });
 
-  if (role === 'admin') {
-    adminOptions.style.display = 'block';
+  const data = await res.json();
+
+  if (!res.ok) {
+    document.getElementById('error').innerText = data.error;
+    return;
   }
 
-  if (role === 'astro') {
-    astroOptions.style.display = 'block';
-  }
-}
+  localStorage.setItem('token', data.token);
+  localStorage.setItem('role', data.user.role);
+  localStorage.setItem('username', data.user.username);
 
-logoutBtn?.addEventListener('click', () => {
-  localStorage.clear();
+
   window.location.href = 'index.html';
 });
