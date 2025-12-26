@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi Proyecto</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <h1>Mi Proyecto</h1>
+
+  <div id="not-logged">
+    <p>No has iniciado sesión</p>
+    <a href="login.html">Iniciar sesión</a>
+  </div>
+
+  <div id="logged" style="display:none;">
+    <p id="welcome"></p>
+
+    <div id="astro-options" style="display:none;">
+      <h3>Opciones Astrónomo</h3>
+      <button onclick="verDatos()">Ver datos</button>
+    </div>
+
+    <div id="admin-options" style="display:none;">
+      <h3>Opciones Administrador</h3>
+      <button onclick="verDatos()">Ver datos</button>
+      <button onclick="crearDato()">Crear</button>
+      <button onclick="eliminarDato()">Eliminar</button>
+    </div>
+
+    <button onclick="logout()">Cerrar sesión</button>
+  </div>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>
