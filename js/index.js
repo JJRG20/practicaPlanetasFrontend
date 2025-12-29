@@ -6,13 +6,12 @@ const role = localStorage.getItem('role');
 
 if (!token) {
   authArea.innerHTML = `
-    <a href="login.html">Login</a>
+    <h3>Inicie sesión para trabajar</h3>
   `;
 } else {
   authArea.innerHTML = `
-    <p>Bienvenido/a, <b>${username}</b></p>
-
     ${role === 'admin' ? `
+      <p>Bienvenido/a, <b>${username}</b> (Administrador)</p>
       <h3>Opciones Administrador</h3>
       <button onclick="window.location.href='ver.html'">Ver datos</button>
       <button>Crear</button>
@@ -20,16 +19,12 @@ if (!token) {
     ` : ''}
 
     ${role === 'astro' ? `
+      <p>Bienvenido/a, <b>${username}</b></p>
 
       <h3>Opciones Astrónomo</h3>
       <button onclick="window.location.href='ver.html'">Ver datos</button>
     ` : ''}
-    <br><br>
-    <button onclick="logout()">Cerrar sesión</button>
+    
   `;
 }
 
-function logout() {
-  localStorage.clear();
-  location.reload();
-}
