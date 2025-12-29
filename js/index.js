@@ -14,7 +14,7 @@ if (!token) {
 
     ${role === 'admin' ? `
       <h3>Opciones Administrador</h3>
-      <button>Ver datos</button>
+      <button onclick="window.location.href='ver.html'">Ver datos</button>
       <button>Crear</button>
       <button>Eliminar</button>
     ` : ''}
@@ -22,7 +22,7 @@ if (!token) {
     ${role === 'astro' ? `
 
       <h3>Opciones Astrónomo</h3>
-      <button>Ver datos</button>
+      <button onclick="window.location.href='ver.html'">Ver datos</button>
     ` : ''}
     <br><br>
     <button onclick="logout()">Cerrar sesión</button>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ver datos</title>
+</head>
+<body>
+
+  <h2>Visualización de datos</h2>
+
+  <div>
+    <button onclick="verTodo()">Ver todo</button>
+    <button onclick="window.location.href='index.html'">Volver</button>
+  </div>
+
+  <hr>
+
+  <div>
+    <h4>Búsqueda individual</h4>
+
+    <select id="tipoBusqueda">
+      <option value="planeta">Planeta (idPlanet)</option>
+      <option value="luna">Luna (idLuna)</option>
+    </select>
+
+    <input type="number" id="valorBusqueda" placeholder="ID">
+
+    <button onclick="buscar()">Buscar</button>
+  </div>
+
+  <hr>
+
+  <pre id="resultado"></pre>
+
+  <script src="js/ver.js"></script>
+</body>
+</html>
