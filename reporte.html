@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reportes</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <h2>Reporte de Planetas</h2>
+
+  <div>
+    <h4>Filtros</h4>
+
+    <label>Diámetro del planeta (Km): desde </label>
+    <input type="number" id="mindiameter">
+
+    <label>, hasta </label>
+    <input type="number" id="maxdiameter">
+
+    <br><br>
+
+    <label>Masa (Ton): desde </label>
+    <input type="number" id="minweight">
+
+    <label>, hasta </label>
+    <input type="number" id="maxweight">
+
+    <br><br>
+
+    <label>Distancia de la órbita con el sol (Km): desde </label>
+    <input type="number" id="minsunDist">
+
+    <label>, hasta </label>
+    <input type="number" id="maxsunDist">
+
+    <br><br>
+
+    <label>Tiempo de órbita alrededor del sol (días): desde </label>
+    <input type="number" id="mintime">
+
+    <label>, hasta </label>
+    <input type="number" id="maxtime">
+
+    <br><br>
+
+    <label>Cantidad de lunas: desde </label>
+    <input type="number" id="minluna">
+
+    <label>, hasta </label>
+    <input type="number" id="maxluna">
+
+    <br><br>
+
+
+    <button onclick="generarReporte()">Generar reporte</button>
+    <button onclick="window.location.href='index.html'">Volver</button>
+  </div>
+
+  <hr>
+
+  <pre id="resultado"></pre>
+
+  <script src="js/header.js"></script>
+  <script src="js/reporte.js"></script>
+</body>
+</html>
