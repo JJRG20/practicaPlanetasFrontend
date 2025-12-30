@@ -15,7 +15,7 @@ if (!token) {
       <h3>Opciones Administrador</h3>
       <button onclick="window.location.href='ver.html'">Ver datos</button>
       <button onclick="window.location.href='reporte.html'">Generar reporte</button>
-      <button>Crear</button>
+      <button onclick="window.location.href='crear.html'">Crear</button>
       <button>Eliminar</button>
     ` : ''}
 
