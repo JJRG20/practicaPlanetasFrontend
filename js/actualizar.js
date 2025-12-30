@@ -48,8 +48,21 @@ function renderFormulario() {
       <input type="number" id="weight"><br>
 
       <button onclick="actualizarluna()">Actualizar</button>
+
+      <hr>
+
+      <h3>Cambiar planeta asociado</h3>
+
+      <label>Luna:</label>
+      <select id="idLunaCorreccion"></select><br>
+
+      <label>Nuevo planeta:</label>
+      <select id="idPlanet"></select><br>
+
+      <button onclick="cambiarplaneta()">Cambiar asociación</button>
     `;
     cargarluna();
+    cargarplaneta();
   }
 }
 
@@ -71,21 +84,35 @@ async function cargarplaneta() {
 
 async function cargarluna() {
   const res = await fetch('http://localhost:3000/api/planeta', {
-    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
   });
 
   const planeta = await res.json();
-  const select = document.getElementById('idLuna');
 
-  planeta.forEach(planeta=> {
+  const selectDatos = document.getElementById('idLuna');
+  const selectRelacion = document.getElementById('idLunaCorreccion');
+
+  selectDatos.innerHTML = '';
+  selectRelacion.innerHTML = '';
+
+  planeta.forEach(planeta => {
     planeta.luna.forEach(luna => {
-      const opt = document.createElement('option');
-      opt.value = luna.idLuna;
-      opt.textContent = `${luna.name} (${planeta.name})`;
-      select.appendChild(opt);
+      const texto = `${luna.name} (${planeta.name})`;
+
+      const opt1 = document.createElement('option');
+      opt1.value = luna.idLuna;
+      opt1.textContent = texto;
+
+      const opt2 = opt1.cloneNode(true);
+
+      selectDatos.appendChild(opt1);
+      selectRelacion.appendChild(opt2);
     });
   });
 }
+
 
 async function actualizarplaneta() {
   const idPlanet = document.getElementById('idPlanet').value;
@@ -142,5 +169,28 @@ async function actualizarluna() {
     window.location.href = 'actualizar.html';
   } else {
     alert('Error al actualizar luna: ' + data.message);
+  }
+}
+
+async function cambiarplaneta() {
+  const idLuna = document.getElementById('idLunaCorreccion').value;
+  const idPlanet = document.getElementById('idPlanet').value;
+
+  const res = await fetch(
+    `http://localhost:3000/api/planeta/${idPlanet}/luna/${idLuna}`,
+    {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    }
+  );
+
+  const data = await res.json();
+  if (res.ok) {
+    alert('Planeta asociado exitosamente');
+    window.location.href = 'actualizar.html';
+  } else {
+    alert('Error al asociar planeta: ' + data.message);
   }
 }
