@@ -12,9 +12,7 @@ function getHeaders() {
   };
 }
 
-// --------------------
 // Cargar planetas o lunas
-// --------------------
 async function cargarElementos() {
   elementoSelect.innerHTML = '';
 
@@ -26,7 +24,7 @@ async function cargarElementos() {
   if (tipo === 'planeta') {
     url = '/api/planeta';
   } else if (tipo === 'luna') {
-    // no hay listado de lunas solo → se obtienen desde planetas
+    // no hay listado de lunas solo -> se obtienen desde planetas
     const res = await fetch(`${API}/api/planeta`, { headers: getHeaders() });
     const planetas = await res.json();
 
@@ -52,9 +50,7 @@ async function cargarElementos() {
   });
 }
 
-// --------------------
-// Soft delete
-// --------------------
+// Soft-delete
 async function softDelete() {
   const tipo = tipoOcultar.value;
   const id = elementoSelect.value;
@@ -68,7 +64,7 @@ async function softDelete() {
 
   if (tipo === 'planeta') {
     url = `/api/planeta/${id}/soft-delete`;
-  } else {
+  } else if (tipo === 'luna'){
     url = `/api/luna/${id}/soft-delete`;
   }
 
@@ -87,9 +83,7 @@ async function softDelete() {
   }
 }
 
-// --------------------
 // Restaurar
-// --------------------
 async function restaurar() {
   const tipo = document.getElementById('tipoRestaurar').value;
   const id = document.getElementById('idRestaurar').value;
