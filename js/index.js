@@ -18,7 +18,7 @@ if (!token) {
       <button onclick="window.location.href='crear.html'">Crear</button>
       <button onclick="window.location.href='actualizar.html'">Actualizar</button>
       <button onclick="window.location.href='gestionar.html'">Ocultar/Restaurar</button>
-      <button>Eliminar</button>
+      <button onclick="window.location.href='eliminar.html'">Eliminar</button>
     ` : ''}
 
     ${role === 'astro' ? `

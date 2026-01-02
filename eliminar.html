@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Eliminar datos</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <h2>Eliminar Planeta o Luna</h2>
+
+  <div>
+    <label for="tipoEliminacion">Seleccione un planeta o luna para eliminar. AVISO: Este proceso es permanente e irreversible.</label>
+    <select id="tipoEliminacion">
+      <option value="">Seleccione</option>
+      <option value="planeta">Planeta</option>
+      <option value="luna">Luna</option>
+    </select><br><br>
+
+    <label for="idEliminar">ID:</label>
+    <input type="number" id="idEliminar" placeholder="ID de Planeta o Luna" required><br><br>
+
+    <button onclick="window.location.href='index.html'">Volver</button>
+    <button onclick="eliminar()">Eliminar</button>
+  </div>
+
+  <hr>
+
+  <p id="confirmacion" style="color: red; font-weight: bold;"></p>
+
+  <script src="js/header.js"></script>
+  <script src="js/eliminar.js"></script>
+</body>
+</html>
