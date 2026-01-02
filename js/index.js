@@ -17,6 +17,7 @@ if (!token) {
       <button onclick="window.location.href='reporte.html'">Generar reporte</button>
       <button onclick="window.location.href='crear.html'">Crear</button>
       <button onclick="window.location.href='actualizar.html'">Actualizar</button>
+      <button onclick="window.location.href='gestionar.html'">Ocultar/Restaurar</button>
       <button>Eliminar</button>
     ` : ''}
 

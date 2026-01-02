@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ocultar / Restaurar</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <h2>Gestionar datos guardados</h2>
+
+  <!-- OCULTAR -->
+  <section>
+    <h3>Ocultar (Soft delete)</h3>
+
+    <label>Tipo:</label>
+    <select id="tipoOcultar">
+      <option value="">Seleccione</option>
+      <option value="planeta">Planeta</option>
+      <option value="luna">Luna</option>
+    </select>
+
+    <br><br>
+    
+    <label>Elemento:</label>
+    <select id="elementoSelect"></select>
+
+    <br><br>
+
+    <button onclick="softDelete()">Ocultar</button>
+  </section>
+
+  <hr>
+
+  <!-- RESTAURAR -->
+  <section>
+    <h3>Restaurar</h3>
+
+    <label>Tipo:</label>
+    <select id="tipoRestaurar">
+      <option value="">Seleccione</option>
+      <option value="planeta">Planeta</option>
+      <option value="luna">Luna</option>
+    </select>
+
+    <br><br>
+
+    <input type="number" id="idRestaurar" placeholder="ID a restaurar">
+
+    <br><br>
+
+    <button onclick="restaurar()">Restaurar</button>
+  </section>
+
+  <br>
+  <button onclick="window.location.href='index.html'">Volver</button>
+
+  <script src="js/header.js"></script>
+  <script src="js/gestionar.js"></script>
+
+</body>
+</html>
