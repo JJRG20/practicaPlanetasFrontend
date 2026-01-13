@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config";
 
 function Gestionar() {
   const { user } = useContext(AuthContext);
@@ -20,16 +21,15 @@ function Gestionar() {
     }
 
     const cargar = async () => {
-      const res = await fetch("http://localhost:3000/api/planeta", {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      const data = await res.json();
-
-      if (tipoOcultar === "planeta") {
+      const endpoint = tipoOcultar === "planeta" ? "planetas" : "lunas";
+      try {
+        const res = await fetch(`${API_URL}/admin/${endpoint}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
+        const data = await res.json();
         setElementos(data);
-      } else {
-        const lunas = data.flatMap((p) => p.luna);
-        setElementos(lunas);
+      } catch (error) {
+        console.error("Error al cargar elementos", error);
       }
     };
     cargar();
@@ -38,33 +38,51 @@ function Gestionar() {
   const handleSoftDelete = async () => {
     if (!tipoOcultar || !idOcultar) return;
 
-    const res = await fetch(
-      `http://localhost:3000/api/${tipoOcultar}/${idOcultar}/soft-delete`,
-      {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${user.token}` },
-      }
-    );
+    const endpoint = tipoOcultar === "planeta" ? "planetas" : "lunas";
+    try {
+      const res = await fetch(
+        `${API_URL}/admin/${endpoint}/${idOcultar}/soft-delete`,
+        {
+          method: "PATCH",
+          headers: { 
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json"
+          },
+        }
+      );
 
-    const data = await res.json();
-    alert(data.message);
-    setTipoOcultar("");
+      const data = await res.json();
+      alert(data.message || "Elemento ocultado");
+      setTipoOcultar("");
+      setIdOcultar("");
+    } catch (error) {
+      alert("Error en el borrado lógico");
+    }
   };
 
   const handleRestore = async () => {
     if (!tipoRestaurar || !idRestaurar) return;
 
-    const res = await fetch(
-      `http://localhost:3000/api/${tipoRestaurar}/${idRestaurar}/restore`,
-      {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${user.token}` },
-      }
-    );
+    const endpoint = tipoRestaurar === "planeta" ? "planetas" : "lunas";
+    try {
+      const res = await fetch(
+        `${API_URL}/admin/${endpoint}/${idRestaurar}/restore`,
+        {
+          method: "PATCH",
+          headers: { 
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json"
+          },
+        }
+      );
 
-    const data = await res.json();
-    alert(data.message);
-    setIdRestaurar("");
+      const data = await res.json();
+      alert(data.message || "Elemento restaurado");
+      setIdRestaurar("");
+      setTipoRestaurar("");
+    } catch (error) {
+      alert("Error al restaurar elemento");
+    }
   };
 
   return (
@@ -93,10 +111,10 @@ function Gestionar() {
           <option value="">Seleccione elemento</option>
           {elementos.map((el) => (
             <option
-              key={el.idPlanet || el.idLuna}
-              value={el.idPlanet || el.idLuna}
+              key={el.id}
+              value={el.id}
             >
-              {el.name} (ID {el.idPlanet || el.idLuna})
+              {el.name} (ID {el.id})
             </option>
           ))}
         </select>

@@ -1,22 +1,23 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config";
 
 function Reporte() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [filtros, setFiltros] = useState({
-    mindiameter: "",
-    maxdiameter: "",
-    minweight: "",
-    maxweight: "",
-    minsunDist: "",
-    maxsunDist: "",
-    mintime: "",
-    maxtime: "",
-    minluna: "",
-    maxluna: "",
+    minDiameter: "",
+    maxDiameter: "",
+    minWeight: "",
+    maxWeight: "",
+    minSunDist: "",
+    maxSunDist: "",
+    minTime: "",
+    maxTime: "",
+    minLunas: "",
+    maxLunas: "",
   });
 
   const [resultado, setResultado] = useState(null);
@@ -28,13 +29,14 @@ function Reporte() {
   const generarReporte = async () => {
     const params = new URLSearchParams();
 
+    // Agregar solo los filtros que tengan valor
     Object.keys(filtros).forEach((key) => {
       if (filtros[key]) params.append(key, filtros[key]);
     });
 
     try {
       const res = await fetch(
-        `http://localhost:3000/api/reporte/idPlanet?${params.toString()}`,
+        `${API_URL}/astro/planetas/report?${params.toString()}`,
         {
           headers: {
             Authorization: `Bearer ${user.token}`,
@@ -47,7 +49,8 @@ function Reporte() {
         const data = await res.json();
         setResultado(data);
       } else {
-        setResultado("Error al generar reporte");
+        const data = await res.json();
+        setResultado("Error: " + (data.message || "No se pudo generar el reporte"));
       }
     } catch (error) {
       alert("Error de conexión");
@@ -64,15 +67,15 @@ function Reporte() {
         <label>Diámetro (Km): desde </label>
         <input
           type="number"
-          id="mindiameter"
-          value={filtros.mindiameter}
+          id="minDiameter"
+          value={filtros.minDiameter}
           onChange={handleChange}
         />
         <label>, hasta </label>
         <input
           type="number"
-          id="maxdiameter"
-          value={filtros.maxdiameter}
+          id="maxDiameter"
+          value={filtros.maxDiameter}
           onChange={handleChange}
         />
         <br />
@@ -81,15 +84,15 @@ function Reporte() {
         <label>Masa (Ton): desde </label>
         <input
           type="number"
-          id="minweight"
-          value={filtros.minweight}
+          id="minWeight"
+          value={filtros.minWeight}
           onChange={handleChange}
         />
         <label>, hasta </label>
         <input
           type="number"
-          id="maxweight"
-          value={filtros.maxweight}
+          id="maxWeight"
+          value={filtros.maxWeight}
           onChange={handleChange}
         />
         <br />
@@ -98,15 +101,15 @@ function Reporte() {
         <label>Distancia Sol (Km): desde </label>
         <input
           type="number"
-          id="minsunDist"
-          value={filtros.minsunDist}
+          id="minSunDist"
+          value={filtros.minSunDist}
           onChange={handleChange}
         />
         <label>, hasta </label>
         <input
           type="number"
-          id="maxsunDist"
-          value={filtros.maxsunDist}
+          id="maxSunDist"
+          value={filtros.maxSunDist}
           onChange={handleChange}
         />
         <br />
@@ -115,15 +118,15 @@ function Reporte() {
         <label>Días de órbita: desde </label>
         <input
           type="number"
-          id="mintime"
-          value={filtros.mintime}
+          id="minTime"
+          value={filtros.minTime}
           onChange={handleChange}
         />
         <label>, hasta </label>
         <input
           type="number"
-          id="maxtime"
-          value={filtros.maxtime}
+          id="maxTime"
+          value={filtros.maxTime}
           onChange={handleChange}
         />
         <br />
@@ -132,15 +135,15 @@ function Reporte() {
         <label>Cantidad de lunas: desde </label>
         <input
           type="number"
-          id="minluna"
-          value={filtros.minluna}
+          id="minLunas"
+          value={filtros.minLunas}
           onChange={handleChange}
         />
         <label>, hasta </label>
         <input
           type="number"
-          id="maxluna"
-          value={filtros.maxluna}
+          id="maxLunas"
+          value={filtros.maxLunas}
           onChange={handleChange}
         />
         <br />
