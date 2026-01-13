@@ -1,15 +1,14 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config";
 
 function VerPlanetas() {
   const [data, setData] = useState(null);
-  const [tipoBusqueda, setTipoBusqueda] = useState("planeta");
+  const [tipoBusqueda, setTipoBusqueda] = useState("planetas");
   const [valorBusqueda, setValorBusqueda] = useState("");
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-
-  const API_URL = "http://localhost:3000/api";
 
   const getHeaders = () => ({
     Authorization: `Bearer ${user?.token}`,
@@ -18,7 +17,7 @@ function VerPlanetas() {
 
   const verTodo = async () => {
     try {
-      const res = await fetch(`${API_URL}/planeta`, { headers: getHeaders() });
+      const res = await fetch(`${API_URL}/astro/planetas`, { headers: getHeaders() });
       const result = await res.json();
       setData(result);
     } catch (error) {
@@ -29,8 +28,15 @@ function VerPlanetas() {
   const buscar = async () => {
     if (!valorBusqueda) return;
     try {
-      const url = `${API_URL}/${tipoBusqueda}/${valorBusqueda}`;
+      const url = `${API_URL}/astro/${tipoBusqueda}/${valorBusqueda}`;
       const res = await fetch(url, { headers: getHeaders() });
+      
+      if (!res.ok) {
+        alert("Elemento no encontrado");
+        setData(null);
+        return;
+      }
+      
       const result = await res.json();
       setData(result);
     } catch (error) {
@@ -42,7 +48,7 @@ function VerPlanetas() {
     <div>
       <h2>Visualización de datos</h2>
       <div>
-        <button onClick={verTodo}>Ver todo</button>
+        <button onClick={verTodo}>Ver todo (Planetas)</button>
         <button onClick={() => navigate("/")}>Volver</button>
       </div>
 
@@ -54,8 +60,8 @@ function VerPlanetas() {
           value={tipoBusqueda}
           onChange={(e) => setTipoBusqueda(e.target.value)}
         >
-          <option value="planeta">Planeta (idPlanet)</option>
-          <option value="luna">Luna (idLuna)</option>
+          <option value="planetas">Planeta (id)</option>
+          <option value="lunas">Luna (id)</option>
         </select>
         <input
           type="number"
