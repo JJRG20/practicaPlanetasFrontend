@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config";
 
 function Actualizar() {
   const { user } = useContext(AuthContext);
@@ -24,17 +25,30 @@ function Actualizar() {
     if (!tipo) return;
 
     const cargarListas = async () => {
-      const resP = await fetch("http://localhost:3000/api/planeta", {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      const dataP = await resP.json();
-      setPlanetas(dataP);
-
-      if (tipo === "luna") {
-        const todasLasLunas = dataP.flatMap((p) =>
-          p.luna.map((l) => ({ ...l, planetaNombre: p.name }))
-        );
-        setLunas(todasLasLunas);
+      try {
+        if (tipo === "planeta") {
+          const res = await fetch(`${API_URL}/admin/planetas`, {
+            headers: { Authorization: `Bearer ${user.token}` },
+          });
+          const data = await res.json();
+          setPlanetas(data);
+        } else {
+          // Cargar lunas directamente
+          const resL = await fetch(`${API_URL}/admin/lunas`, {
+            headers: { Authorization: `Bearer ${user.token}` },
+          });
+          const dataL = await resL.json();
+          setLunas(dataL);
+          
+          // También necesitamos planetas para la re-asociación
+          const resP = await fetch(`${API_URL}/admin/planetas`, {
+            headers: { Authorization: `Bearer ${user.token}` },
+          });
+          const dataP = await resP.json();
+          setPlanetas(dataP);
+        }
+      } catch (error) {
+        console.error("Error cargando datos", error);
       }
     };
     cargarListas();
@@ -54,9 +68,8 @@ function Actualizar() {
     }
 
     const lista = tipo === "planeta" ? planetas : lunas;
-    const encontrado = lista.find(
-      (item) => (tipo === "planeta" ? item.idPlanet : item.idLuna) == id
-    );
+    // Backend usa 'id' genérico
+    const encontrado = lista.find((item) => item.id == id);
 
     if (encontrado) {
       setFormData({
@@ -74,46 +87,63 @@ function Actualizar() {
   };
 
   const ejecutarActualizacion = async () => {
-    const url =
-      tipo === "planeta"
-        ? `http://localhost:3000/api/planeta/${idSeleccionado}`
-        : `http://localhost:3000/api/luna/${idSeleccionado}`;
+    const endpoint = tipo === "planeta" ? "planetas" : "lunas";
+    const url = `${API_URL}/admin/${endpoint}/${idSeleccionado}`;
 
-    const res = await fetch(url, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${user.token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
+    try {
+      const res = await fetch(url, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    if (res.ok) {
-      alert(
-        `${tipo.charAt(0).toUpperCase() + tipo.slice(1)} actualizado con éxito`
-      );
-      navigate("/ver");
-    } else {
       const data = await res.json();
-      alert("Error: " + data.message);
+
+      if (res.ok) {
+        alert(
+          `${tipo.charAt(0).toUpperCase() + tipo.slice(1)} actualizado con éxito`
+        );
+        navigate("/ver");
+      } else {
+        alert("Error: " + (data.message || "No se pudo actualizar"));
+      }
+    } catch (error) {
+      alert("Error de conexión");
     }
   };
 
   const cambiarAsociacion = async () => {
-    const res = await fetch(
-      `http://localhost:3000/api/planeta/${idNuevoPlaneta}/luna/${idSeleccionado}`,
-      {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${user.token}` },
-      }
-    );
+    if (!idNuevoPlaneta) {
+      alert("Seleccione un planeta destino");
+      return;
+    }
 
-    if (res.ok) {
-      alert("Asociación cambiada con éxito");
-      navigate("/ver");
-    } else {
+    try {
+      const res = await fetch(
+        `${API_URL}/admin/lunas/${idSeleccionado}/planeta`,
+        {
+          method: "PATCH",
+          headers: { 
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ idPlaneta: idNuevoPlaneta })
+        }
+      );
+
       const data = await res.json();
-      alert("Error: " + data.message);
+
+      if (res.ok) {
+        alert("Asociación cambiada con éxito");
+        navigate("/ver");
+      } else {
+        alert("Error: " + (data.message || "No se pudo cambiar la asociación"));
+      }
+    } catch (error) {
+      alert("Error de conexión");
     }
   };
 
@@ -126,6 +156,8 @@ function Actualizar() {
         onChange={(e) => {
           setTipo(e.target.value);
           setIdSeleccionado("");
+          setPlanetas([]);
+          setLunas([]);
         }}
       >
         <option value="">Seleccione</option>
@@ -145,11 +177,8 @@ function Actualizar() {
           >
             <option value="">Seleccione un elemento</option>
             {(tipo === "planeta" ? planetas : lunas).map((item) => (
-              <option
-                key={tipo === "planeta" ? item.idPlanet : item.idLuna}
-                value={tipo === "planeta" ? item.idPlanet : item.idLuna}
-              >
-                {item.name} {tipo === "luna" && `(${item.planetaNombre})`}
+              <option key={item.id} value={item.id}>
+                {item.name}
               </option>
             ))}
           </select>
@@ -167,6 +196,7 @@ function Actualizar() {
           <label>Diámetro (Km):</label>
           <input
             type="number"
+            step="any"
             id="diameter"
             value={formData.diameter}
             onChange={handleChange}
@@ -175,6 +205,7 @@ function Actualizar() {
           <label>Masa (Ton):</label>
           <input
             type="number"
+            step="any"
             id="weight"
             value={formData.weight}
             onChange={handleChange}
@@ -186,6 +217,7 @@ function Actualizar() {
               <label>Distancia Sol (Km):</label>
               <input
                 type="number"
+                step="any"
                 id="sunDist"
                 value={formData.sunDist}
                 onChange={handleChange}
@@ -194,6 +226,7 @@ function Actualizar() {
               <label>Tiempo Órbita (días):</label>
               <input
                 type="number"
+                step="any"
                 id="time"
                 value={formData.time}
                 onChange={handleChange}
@@ -220,7 +253,7 @@ function Actualizar() {
               >
                 <option value="">Seleccione planeta destino</option>
                 {planetas.map((p) => (
-                  <option key={p.idPlanet} value={p.idPlanet}>
+                  <option key={p.id} value={p.id}>
                     {p.name}
                   </option>
                 ))}

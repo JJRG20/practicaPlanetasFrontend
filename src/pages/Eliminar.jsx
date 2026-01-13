@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config";
 
 function Eliminar() {
   const { user } = useContext(AuthContext);
@@ -21,8 +22,11 @@ function Eliminar() {
 
     if (!confirmar) return;
 
+    // Mapeo a plural para coincidir con endpoints del backend
+    const endpoint = tipo === "planeta" ? "planetas" : "lunas";
+
     try {
-      const res = await fetch(`http://localhost:3000/api/${tipo}/${id}`, {
+      const res = await fetch(`${API_URL}/admin/${endpoint}/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -31,7 +35,7 @@ function Eliminar() {
       });
 
       const data = await res.json();
-      alert(data.message);
+      alert(data.message || "Operación realizada");
 
       if (res.ok) {
         navigate("/ver");

@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config";
 
 function Crear() {
   const { user } = useContext(AuthContext);
@@ -20,7 +21,7 @@ function Crear() {
   // Cargar planetas solo si el tipo es 'luna'
   useEffect(() => {
     if (tipo === "luna") {
-      fetch("http://localhost:3000/api/planeta", {
+      fetch(`${API_URL}/admin/planetas`, {
         headers: { Authorization: `Bearer ${user.token}` },
       })
         .then((res) => res.json())
@@ -35,10 +36,10 @@ function Crear() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = tipo === "planeta" ? "/api/planeta" : "/api/luna";
+    const endpoint = tipo === "planeta" ? "/admin/planetas" : "/admin/lunas";
 
     try {
-      const res = await fetch(`http://localhost:3000${url}`, {
+      const res = await fetch(`${API_URL}${endpoint}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -47,14 +48,15 @@ function Crear() {
         body: JSON.stringify(formData),
       });
 
+      const data = await res.json();
+
       if (res.ok) {
         alert(
           `${tipo.charAt(0).toUpperCase() + tipo.slice(1)} creado/a con éxito`
         );
         navigate("/ver");
       } else {
-        const data = await res.json();
-        alert("Error: " + data.message);
+        alert("Error: " + (data.message || "No se pudo realizar la operación"));
       }
     } catch (error) {
       alert("Error de conexión");
@@ -100,6 +102,7 @@ function Crear() {
         <label>Diámetro (Km):</label>
         <input
           type="number"
+          step="any"
           id="diameter"
           value={formData.diameter}
           onChange={handleChange}
@@ -110,6 +113,7 @@ function Crear() {
         <label>Masa (Ton):</label>
         <input
           type="number"
+          step="any"
           id="weight"
           value={formData.weight}
           onChange={handleChange}
@@ -122,6 +126,7 @@ function Crear() {
             <label>Distancia al sol (Km):</label>
             <input
               type="number"
+              step="any"
               id="sunDist"
               value={formData.sunDist}
               onChange={handleChange}
@@ -131,6 +136,7 @@ function Crear() {
             <label>Tiempo de órbita (días):</label>
             <input
               type="number"
+              step="any"
               id="time"
               value={formData.time}
               onChange={handleChange}
@@ -149,7 +155,7 @@ function Crear() {
             >
               <option value="">Seleccione un planeta</option>
               {planetas.map((p) => (
-                <option key={p.idPlanet} value={p.idPlanet}>
+                <option key={p.id} value={p.id}>
                   {p.name}
                 </option>
               ))}
