@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../config";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -15,7 +16,7 @@ function Login() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:3000/api/auth/login", {
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -24,7 +25,7 @@ function Login() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Error al iniciar sesión");
+        setError(data.message || "Error al iniciar sesión");
         return;
       }
 

@@ -17,12 +17,12 @@ export const AuthProvider = ({ children }) => {
 
   const login = (userData) => {
     localStorage.setItem("token", userData.token);
-    localStorage.setItem("role", userData.user.role);
-    localStorage.setItem("username", userData.user.username);
+    localStorage.setItem("role", userData.role);
+    localStorage.setItem("username", userData.username);
     setUser({
       token: userData.token,
-      role: userData.user.role,
-      username: userData.user.username,
+      role: userData.role,
+      username: userData.username,
     });
   };
 
