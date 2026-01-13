@@ -155,7 +155,7 @@ function Crear() {
             >
               <option value="">Seleccione un planeta</option>
               {planetas.map((p) => (
-                <option key={p.id} value={p.id}>
+                <option key={p.idPlanet} value={p.idPlanet}>
                   {p.name}
                 </option>
               ))}

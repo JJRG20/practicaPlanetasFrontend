@@ -109,14 +109,14 @@ function Gestionar() {
           onChange={(e) => setIdOcultar(e.target.value)}
         >
           <option value="">Seleccione elemento</option>
-          {elementos.map((el) => (
-            <option
-              key={el.id}
-              value={el.id}
-            >
-              {el.name} (ID {el.id})
-            </option>
-          ))}
+          {elementos.map((el) => {
+            const idReal = tipoOcultar === "planeta" ? el.idPlanet : el.idLuna;
+            return (
+              <option key={idReal} value={idReal}>
+                {el.name} (ID {idReal})
+              </option>
+            );
+          })}
         </select>
         <button onClick={handleSoftDelete}>Ocultar</button>
       </section>

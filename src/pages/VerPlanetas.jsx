@@ -16,12 +16,25 @@ function VerPlanetas() {
   });
 
   const verTodo = async () => {
+    console.log("Token actual:", user?.token); // Debug
+    
+    // Determinar endpoint según rol
+    const role = user?.role?.toLowerCase();
+    const prefix = role === 'admin' ? '/admin' : '/astro';
+    
     try {
-      const res = await fetch(`${API_URL}/astro/planetas`, { headers: getHeaders() });
+      const res = await fetch(`${API_URL}${prefix}/planetas`, { headers: getHeaders() });
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Error ${res.status}: ${errorText}`);
+      }
+
       const result = await res.json();
       setData(result);
     } catch (error) {
-      alert("Error al obtener datos");
+      console.error("Error en verTodo:", error);
+      alert(`Error al obtener datos: ${error.message}`);
     }
   };
 

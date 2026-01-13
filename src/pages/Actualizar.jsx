@@ -68,8 +68,11 @@ function Actualizar() {
     }
 
     const lista = tipo === "planeta" ? planetas : lunas;
-    // Backend usa 'id' genérico
-    const encontrado = lista.find((item) => item.id == id);
+    // Backend usa idPlanet o idLuna
+    const encontrado = lista.find((item) => {
+      const itemId = tipo === "planeta" ? item.idPlanet : item.idLuna;
+      return String(itemId) === String(id);
+    });
 
     if (encontrado) {
       setFormData({
@@ -130,7 +133,7 @@ function Actualizar() {
             Authorization: `Bearer ${user.token}`,
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ idPlaneta: idNuevoPlaneta })
+          body: JSON.stringify({ newIdPlanet: idNuevoPlaneta })
         }
       );
 
@@ -176,11 +179,14 @@ function Actualizar() {
             onChange={(e) => manejarSeleccion(e.target.value)}
           >
             <option value="">Seleccione un elemento</option>
-            {(tipo === "planeta" ? planetas : lunas).map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
+            {(tipo === "planeta" ? planetas : lunas).map((item) => {
+               const itemId = tipo === "planeta" ? item.idPlanet : item.idLuna;
+               return (
+                <option key={itemId} value={itemId}>
+                  {item.name}
+                </option>
+              );
+            })}
           </select>
           <br />
           <br />
@@ -253,7 +259,7 @@ function Actualizar() {
               >
                 <option value="">Seleccione planeta destino</option>
                 {planetas.map((p) => (
-                  <option key={p.id} value={p.id}>
+                  <option key={p.idPlanet} value={p.idPlanet}>
                     {p.name}
                   </option>
                 ))}

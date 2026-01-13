@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../config";
@@ -9,10 +9,34 @@ function Eliminar() {
 
   const [tipo, setTipo] = useState("");
   const [id, setId] = useState("");
+  const [elementos, setElementos] = useState([]);
+
+  // Cargar lista de elementos cuando cambia el tipo
+  useEffect(() => {
+    if (!tipo) {
+      setElementos([]);
+      return;
+    }
+
+    const cargarElementos = async () => {
+      // Mapeo plural para endpoints de listado
+      const endpoint = tipo === "planeta" ? "planetas" : "lunas";
+      try {
+        const res = await fetch(`${API_URL}/admin/${endpoint}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        });
+        const data = await res.json();
+        setElementos(data);
+      } catch (error) {
+        console.error("Error cargando elementos", error);
+      }
+    };
+    cargarElementos();
+  }, [tipo, user.token]);
 
   const handleEliminar = async () => {
     if (!tipo || !id) {
-      alert("Por favor, selecciona el tipo e ingresa el ID.");
+      alert("Por favor, selecciona el tipo y el elemento a eliminar.");
       return;
     }
 
@@ -22,7 +46,7 @@ function Eliminar() {
 
     if (!confirmar) return;
 
-    // Mapeo a plural para coincidir con endpoints del backend
+    // Mapeo a plural para endpoints de borrado
     const endpoint = tipo === "planeta" ? "planetas" : "lunas";
 
     try {
@@ -53,7 +77,13 @@ function Eliminar() {
       </p>
 
       <label>Seleccione tipo: </label>
-      <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
+      <select 
+        value={tipo} 
+        onChange={(e) => {
+          setTipo(e.target.value);
+          setId(""); // Resetear selección al cambiar tipo
+        }}
+      >
         <option value="">Seleccione</option>
         <option value="planeta">Planeta</option>
         <option value="luna">Luna</option>
@@ -61,15 +91,27 @@ function Eliminar() {
       <br />
       <br />
 
-      <label>ID a eliminar: </label>
-      <input
-        type="number"
-        placeholder="ID de Planeta o Luna"
-        value={id}
-        onChange={(e) => setId(e.target.value)}
-      />
-      <br />
-      <br />
+      {tipo && (
+        <>
+          <label>Elemento a eliminar: </label>
+          <select
+            value={id}
+            onChange={(e) => setId(e.target.value)}
+          >
+            <option value="">Seleccione elemento</option>
+            {elementos.map((el) => {
+              const idReal = tipo === "planeta" ? el.idPlanet : el.idLuna;
+              return (
+                <option key={idReal} value={idReal}>
+                  {el.name} (ID {idReal})
+                </option>
+              );
+            })}
+          </select>
+          <br />
+          <br />
+        </>
+      )}
 
       <button onClick={() => navigate("/")}>Volver</button>
       <button
